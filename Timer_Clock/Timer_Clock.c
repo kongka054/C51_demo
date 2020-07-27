@@ -5,33 +5,33 @@ sbit LED0=P3^7;
 sbit zero=P3^4;
 sbit enter=P3^5;
 
-unsigned char SMG_dat[10]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};//Êı×Ö¿â
-uchar scanner[3]={0xFE,0xFD,0xFB};																						//É¨ÃèĞĞ
+unsigned char SMG_dat[10]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};//æ•°å­—åº“
+uchar scanner[3]={0xFE,0xFD,0xFB};																						//æ‰«æè¡Œ
 
 void display(unsigned long a);
 void delay(unsigned int a);
 
-unsigned int t;   //Ê±¼ä
+unsigned int t;   //æ—¶é—´
 int ss=0;
 int mm=0;
 int hh=0;
 unsigned int num=0;
 int num2=0;
 
-//Ö÷º¯Êı
+//ä¸»å‡½æ•°
 void main()
 {
 	LED0=0;
-	AUXR&=0x7F;  //¶¨Ê±Æ÷ÖĞ¶Ï¼Ä´æÆ÷ÉèÖÃ
+	AUXR&=0x7F;  //å®šæ—¶å™¨ä¸­æ–­å¯„å­˜å™¨è®¾ç½®
 	TMOD=0x02;
 	TL0=0xEC;		
 	TH0=0xEC;		
-	EA=1;					//Æô¶¯×ÜÖĞ¶Ï
-	ET0=1;				//Æô¶¯¶¨Ê±Æ÷0ÖĞ¶Ï
-	TR0=1;				//Æô¶¯¶¨Ê±Æ÷0
-	EX1=1;				//°´¼üÖĞ¶Ï  3.3
-	IT1=0;				//°´ÏÂ
-	IP=0x04;			//°´¼üÖĞ¶ÏÓÅÏÈ
+	EA=1;					//å¯åŠ¨æ€»ä¸­æ–­
+	ET0=1;				//å¯åŠ¨å®šæ—¶å™¨0ä¸­æ–­
+	TR0=1;				//å¯åŠ¨å®šæ—¶å™¨0
+	EX1=1;				//æŒ‰é”®ä¸­æ–­  3.3
+	IT1=0;				//æŒ‰ä¸‹
+	IP=0x04;			//æŒ‰é”®ä¸­æ–­ä¼˜å…ˆ
 	while(1)
 	{	
 		if(mm<60&&hh<24)
@@ -47,17 +47,17 @@ void main()
 	}
 }
 
-//SMGÇı¶¯
+//SMGé©±åŠ¨
 void display(unsigned long a)
 {      
 	unsigned char B[4];
 	int i,j;
 	
-	P2M0=0xff;  //ÍÆÍì
+	P2M0=0xff;  //æ¨æŒ½
 	P2M1=0x00;
 
 	for(i=0;i<4;i++)
-	{  //½«a ´«Èë£¬²¢²ğ³ÉËÄÎ»£¡
+	{  //å°†a ä¼ å…¥ï¼Œå¹¶æ‹†æˆå››ä½ï¼
 		B[i]=a%10;
 		a=a/10;
 	}
@@ -65,7 +65,7 @@ void display(unsigned long a)
 	for(j=0;j<4;j++)
 	{
 		if(j==2)
-		{                  //ÖĞ¼äÄÇÎ»Ğ¡ÊıµãÉÁË¸
+		{                  //ä¸­é—´é‚£ä½å°æ•°ç‚¹é—ªçƒ
 			if(LED0==0)
 			{
 				P2=SMG_dat[B[j]]|0x80;
@@ -96,10 +96,10 @@ void delay(unsigned int a)
 
 int getKEY()
 {
-	//¾ØÕó¼üÅÌ¶ÁÈ¡
+	//çŸ©é˜µé”®ç›˜è¯»å–
 	int i=0;
-	int x=0; //ĞĞ×ø±ê
-	int y=0;  //ÁĞ×ø±ê
+	int x=0; //è¡Œåæ ‡
+	int y=0;  //åˆ—åæ ‡
 	uchar ifPress;
 	int keyNumber=0;
 	x=0;
@@ -107,7 +107,7 @@ int getKEY()
 	for(i=0;i<3;i++)
 	{
 		x=i+1;
-		P1=scanner[i];    //É¨ÃèµÚiĞĞ
+		P1=scanner[i];    //æ‰«æç¬¬iè¡Œ
 		ifPress=P1 & 0xE0;
 		if(ifPress!=0xE0)
 		{
@@ -136,12 +136,12 @@ int getKEY()
 		return 0;
 	}
 	return 10;
-	//Ã»°´ÏÂÈÎºÎ°´¼ü
+	//æ²¡æŒ‰ä¸‹ä»»ä½•æŒ‰é”®
 }
 
-void INT1() interrupt 2
+void INT_1() interrupt 2
 {
-	//°´¼üÖĞ¶Ïº¯Êı
+	//æŒ‰é”®ä¸­æ–­å‡½æ•°
 	unsigned char key;
 	unsigned long number=0;
 	while(1)
@@ -173,7 +173,7 @@ void INT1() interrupt 2
 
 void T0_time() interrupt 1
 {
-	//ÖĞ¶Ïº¯Êı
+	//ä¸­æ–­å‡½æ•°
 	if(num==10000)
 	{
 			num=0;
